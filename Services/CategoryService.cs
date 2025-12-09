@@ -7,48 +7,52 @@ namespace ConsoleApp1.Services;
 
 public class CategoryService
 {
-    private readonly ShopContext _context;
 
-    public CategoryService(ShopContext context)
+    public CategoryService()
     {
-        _context = context;
+        
     }
 
     // CREATE
     public async Task AddCategoryAsync(Category category)
     {
-        _context.Categories.Add(category);
-        await _context.SaveChangesAsync();
+        using var context = new ShopContext();
+        context.Categories.Add(category);
+        await context.SaveChangesAsync();
     }
 
     // READ (alla)
     public async Task<List<Category>> GetCategoriesAsync()
     {
-        return await _context.Categories.ToListAsync();
+        using var context = new ShopContext();
+        return await context.Categories.ToListAsync();
     }
 
     // READ (en)
     public async Task<Category?> GetCategoryByIdAsync(int id)
     {
-        return await _context.Categories
+        using var context = new ShopContext();
+        return await context.Categories
             .FirstOrDefaultAsync(c => c.CategoryId == id);
     }
 
     // UPDATE
     public async Task UpdateCategoryAsync(Category category)
     {
-        _context.Categories.Update(category);
-        await _context.SaveChangesAsync();
+        using var context = new ShopContext();
+        context.Categories.Update(category);
+        await context.SaveChangesAsync();
     }
 
     // DELETE
     public async Task DeleteCategoryAsync(int id)
     {
-        var category = await _context.Categories.FindAsync(id);
+        using var  context = new ShopContext();
+        var category = await context.Categories.FindAsync(id);
         if (category != null)
         {
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
+            context.Categories.Remove(category);
+            await context.SaveChangesAsync();
         }
     }
 }

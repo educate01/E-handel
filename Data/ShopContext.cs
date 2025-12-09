@@ -2,9 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using ConsoleApp1.Models;
 using ConsoleApp1.Configurations;
 namespace ConsoleApp1.Data;
-
+// Data/ShopContext.cs
 public class ShopContext : DbContext
 {
+    
+    public DbSet<User> Users => Set<User>();  
     public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<Order> Orders => Set<Order>();
     public DbSet<OrderRow> OrderRows => Set<OrderRow>();
@@ -17,6 +19,7 @@ public class ShopContext : DbContext
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
         modelBuilder.ApplyConfiguration(new CustomerConfiguration());
         modelBuilder.ApplyConfiguration(new OrderConfiguration());
         modelBuilder.ApplyConfiguration(new OrderRowConfiguration());

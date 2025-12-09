@@ -6,24 +6,24 @@ namespace ConsoleApp1.Services;
 
 public class OrderRowService
 {
-    private readonly ShopContext _context;
 
-    public OrderRowService(ShopContext context)
+    public OrderRowService()
     {
-        _context = context;
     }
 
     // CREATE
     public async Task AddOrderRowAsync(OrderRow orderRow)
     {
-        _context.OrderRows.Add(orderRow);
-        await _context.SaveChangesAsync();
+        using var context = new ShopContext();
+        context.OrderRows.Add(orderRow);
+        await context.SaveChangesAsync();
     }
 
     // READ ALL
     public async Task<List<OrderRow>> GetAllAsync()
     {
-        return await _context.OrderRows
+        using var context = new ShopContext();
+        return await context.OrderRows
             .Include(or => or.Product)
             .Include(or => or.Order)
             .ToListAsync();
@@ -32,7 +32,8 @@ public class OrderRowService
     // READ ONE
     public async Task<OrderRow?> GetByIdAsync(int id)
     {
-        return await _context.OrderRows
+        using var context = new ShopContext();
+        return await context.OrderRows
             .Include(or => or.Product)
             .Include(or => or.Order)
             .FirstOrDefaultAsync(or => or.OrderRowId == id);
@@ -41,18 +42,20 @@ public class OrderRowService
     // UPDATE
     public async Task UpdateAsync(OrderRow orderRow)
     {
-        _context.OrderRows.Update(orderRow);
-        await _context.SaveChangesAsync();
+        using var context = new ShopContext();
+        context.OrderRows.Update(orderRow);
+        await context.SaveChangesAsync();
     }
 
     // DELETE
     public async Task DeleteAsync(int id)
     {
-        var row = await _context.OrderRows.FindAsync(id);
+        using var context = new ShopContext();
+        var row = await context.OrderRows.FindAsync(id);
         if (row != null)
         {
-            _context.OrderRows.Remove(row);
-            await _context.SaveChangesAsync();
+            context.OrderRows.Remove(row);
+            await context.SaveChangesAsync();
         }
     }
 }

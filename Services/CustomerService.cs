@@ -6,30 +6,32 @@ namespace ConsoleApp1.Services;
 
 public class CustomerService
 {
-    private readonly ShopContext _context;
 
-    public CustomerService(ShopContext context)
+    public CustomerService()
     {
-        _context = context;
+        
     }
 
     // CREATE
     public async Task AddCustomerAsync(Customer customer)
     {
-        _context.Customers.Add(customer);
-        await _context.SaveChangesAsync();
+        using var context = new ShopContext();
+        context.Customers.Add(customer);
+        await context.SaveChangesAsync();
     }
 
     // READ ALL
     public async Task<List<Customer>> GetAllAsync()
     {
-        return await _context.Customers.ToListAsync();
+        using var context = new ShopContext();
+        return await context.Customers.ToListAsync();
     }
 
     // READ ONE
     public async Task<Customer?> GetByIdAsync(int id)
     {
-        return await _context.Customers
+        using var  context = new ShopContext();
+        return await context.Customers
             .Include(c => c.Orders)
             .FirstOrDefaultAsync(c => c.CustomerID == id);
     }
@@ -37,18 +39,27 @@ public class CustomerService
     // UPDATE
     public async Task UpdateAsync(Customer customer)
     {
-        _context.Customers.Update(customer);
-        await _context.SaveChangesAsync();
+        using var context = new ShopContext();
+        context.Customers.Update(customer);
+        await context.SaveChangesAsync();
     }
 
     // DELETE
     public async Task DeleteAsync(int id)
     {
-        var customer = await _context.Customers.FindAsync(id);
+        using var  context = new ShopContext();
+        var customer = await context.Customers.FindAsync(id);
         if (customer != null)
         {
-            _context.Customers.Remove(customer);
-            await _context.SaveChangesAsync();
+            context.Customers.Remove(customer);
+            await context.SaveChangesAsync();
         }
+    }
+    public async Task<List<Customer>> SearchCustomersByNameAsync(string name)
+    {
+        using var context = new ShopContext();
+        return await context.Customers
+            .Where(c => c.Name.Contains(name))
+            .ToListAsync();
     }
 }
